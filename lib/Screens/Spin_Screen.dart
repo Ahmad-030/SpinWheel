@@ -591,9 +591,10 @@ class _SpinScreenState extends State<SpinScreen> with TickerProviderStateMixin {
                         ),
                         const SizedBox(height: 8),
                         Text(
+                          // ✅ FIX: Show "Image" instead of filename
                           winner!.type == 'text'
                               ? winner!.value
-                              : winner!.value.split('/').last,
+                              : 'Image', // Changed from winner!.value.split('/').last
                           style: const TextStyle(
                             color: Colors.white,
                             fontSize: 18,

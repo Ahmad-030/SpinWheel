@@ -116,35 +116,36 @@ class _EntryCardState extends State<EntryCard> with SingleTickerProviderStateMix
                   ),
                 ),
                 const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        widget.entry.type == 'text' ? 'Text Entry' : 'Image Entry',
-                        style: const TextStyle(
-                          color: Colors.white70,
-                          fontSize: 11,
-                          fontWeight: FontWeight.w500,
-                          letterSpacing: 0.5,
-                        ),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      widget.entry.type == 'text' ? 'Text Entry' : 'Image Entry',
+                      style: const TextStyle(
+                        color: Colors.white70,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w500,
+                        letterSpacing: 0.5,
                       ),
-                      const SizedBox(height: 6),
-                      Text(
-                        widget.entry.type == 'text'
-                            ? widget.entry.value
-                            : widget.entry.value.split('/').last,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
-                        ),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      // ✅ FIX: Show "Image" for image entries instead of filename
+                      widget.entry.type == 'text'
+                          ? widget.entry.value
+                          : 'Image', // Changed from widget.entry.value.split('/').last
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
                       ),
-                    ],
-                  ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
                 ),
+              ),
                 IconButton(
                   onPressed: widget.onDelete,
                   icon: const Icon(Icons.close, color: Colors.white),

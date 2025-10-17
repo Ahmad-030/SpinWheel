@@ -129,15 +129,15 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
               // Lottie Animation from local asset
               SizedBox(
-                height: 200,
+                height: 180,
                 child: Center(
                   child: Stack(
                     alignment: Alignment.center,
                     children: [
                       // Glowing background
                       Container(
-                        width: 180,
-                        height: 180,
+                        width: 160,
+                        height: 160,
                         decoration: BoxDecoration(
                           gradient: RadialGradient(
                             colors: [
@@ -152,8 +152,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                       // Lottie Animation from asset
                       Lottie.asset(
                         'assets/animations/casino.json',
-                        width: 200,
-                        height: 200,
+                        width: 180,
+                        height: 180,
                         controller: _lottieController,
                         onLoaded: (composition) {
                           _lottieController.duration = composition.duration;
@@ -165,7 +165,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 ),
               ),
 
-              const SizedBox(height: 20),
+              const SizedBox(height: 16),
 
               // Add buttons
               Padding(
@@ -195,9 +195,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 ),
               ),
 
-              const SizedBox(height: 20),
+              const SizedBox(height: 16),
 
-              // Entries list
+              // ✅ COMPLETE FIX: Entries list with proper scrolling
               Expanded(
                 child: entries.isEmpty
                     ? Center(
@@ -220,60 +220,70 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                     ],
                   ),
                 )
-                    : ListView.builder(
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  itemCount: entries.length,
-                  itemBuilder: (context, index) {
-                    return EntryCard(
-                      entry: entries[index],
-                      onDelete: () => _removeEntry(entries[index].id),
-                      index: index,
-                    );
-                  },
-                ),
-              ),
-
-              // Start button
-              if (entries.length >= 3)
-                Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: SizedBox(
-                    width: double.infinity,
-                    height: 60,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => SpinScreen(entries: entries),
-                          ),
-                        );
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.purple,
-                        foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                        elevation: 8,
+                    : SingleChildScrollView(
+                  physics: const BouncingScrollPhysics(),
+                  child: Column(
+                    children: [
+                      // Entries list
+                      ListView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        itemCount: entries.length,
+                        itemBuilder: (context, index) {
+                          return EntryCard(
+                            entry: entries[index],
+                            onDelete: () => _removeEntry(entries[index].id),
+                            index: index,
+                          );
+                        },
                       ),
-                      child: const Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.play_arrow, size: 28),
-                          SizedBox(width: 8),
-                          Text(
-                            'Start',
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
+
+                      // Start button (inside scrollable area)
+                      if (entries.length >= 3)
+                        Padding(
+                          padding: const EdgeInsets.all(20),
+                          child: SizedBox(
+                            width: double.infinity,
+                            height: 60,
+                            child: ElevatedButton(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => SpinScreen(entries: entries),
+                                  ),
+                                );
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.purple,
+                                foregroundColor: Colors.white,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(30),
+                                ),
+                                elevation: 8,
+                              ),
+                              child: const Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(Icons.play_arrow, size: 28),
+                                  SizedBox(width: 8),
+                                  Text(
+                                    'Start',
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
-                        ],
-                      ),
-                    ),
+                        ),
+                    ],
                   ),
                 ),
+              ),
             ],
           ),
         ),
@@ -324,27 +334,3 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     );
   }
 }
-
-/* SETUP INSTRUCTIONS:
-
-1. ADD DEPENDENCIES to pubspec.yaml:
-   dependencies:
-     image_picker: ^1.0.0
-
-2. ANDROID PERMISSIONS (android/app/src/main/AndroidManifest.xml):
-   <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-   <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
-
-3. iOS PERMISSIONS (ios/Runner/Info.plist):
-   <key>NSPhotoLibraryUsageDescription</key>
-   <string>We need access to your photos to add images to the spin wheel</string>
-
-4. SETUP LOTTIE ASSET (pubspec.yaml):
-   assets:
-     - assets/lottie/spin_wheel.json
-
-5. DOWNLOAD LOTTIE:
-   - Go to https://lottiefiles.com/
-   - Download a spin/wheel animation
-   - Place it in assets/lottie/spin_wheel.json
-*/
