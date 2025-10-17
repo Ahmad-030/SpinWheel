@@ -87,7 +87,6 @@ class _SpinScreenState extends State<SpinScreen> with TickerProviderStateMixin {
       winner = null;
     });
 
-    // Get available entries
     List<SpinEntry> availableEntries = widget.entries
         .where((entry) => entry.id != previousWinner?.id)
         .toList();
@@ -97,19 +96,12 @@ class _SpinScreenState extends State<SpinScreen> with TickerProviderStateMixin {
       previousWinner = null;
     }
 
-    // Select winner index
     final random = math.Random();
     finalIndex = random.nextInt(availableEntries.length);
 
-    // Calculate total rotation: multiple full spins + final position
-    final fullSpins = 5;
-    final totalItems = availableEntries.length * fullSpins + finalIndex;
-
-    // Reset and start animation
     _slotController.reset();
     await _slotController.forward();
 
-    // Set winner after animation
     setState(() {
       winner = availableEntries[finalIndex];
       previousWinner = winner;
@@ -154,7 +146,6 @@ class _SpinScreenState extends State<SpinScreen> with TickerProviderStateMixin {
         child: SafeArea(
           child: Column(
             children: [
-              // Header
               Padding(
                 padding: const EdgeInsets.all(20),
                 child: Row(
@@ -179,8 +170,6 @@ class _SpinScreenState extends State<SpinScreen> with TickerProviderStateMixin {
                   ],
                 ),
               ),
-
-              // Slot Machine and Winner Display - Scrollable
               Expanded(
                 child: SingleChildScrollView(
                   physics: const BouncingScrollPhysics(),
@@ -199,8 +188,6 @@ class _SpinScreenState extends State<SpinScreen> with TickerProviderStateMixin {
                   ),
                 ),
               ),
-
-              // Spin Button - Fixed at bottom
               Padding(
                 padding: const EdgeInsets.all(20),
                 child: _buildSpinButton(),
@@ -213,84 +200,78 @@ class _SpinScreenState extends State<SpinScreen> with TickerProviderStateMixin {
   }
 
   Widget _buildSlotMachine(bool isDark, List<SpinEntry> entries) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        // Top decoration
-        Container(
-          height: 12,
-          width: MediaQuery.of(context).size.width - 100,
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                Colors.amber[700]!,
-                Colors.yellow[400]!,
-                Colors.amber[700]!,
-              ],
-            ),
-            borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(25),
-              topRight: Radius.circular(25),
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.amber.withValues(alpha: 0.8),
-                blurRadius: 20,
-                spreadRadius: 3,
-              ),
-            ],
-          ),
-        ),
+    // Corrected the chromeHighlight back to a blueGrey tone for consistency
+    final Color chromeColor = isDark ? Colors.blueGrey[800]! : Colors.grey[700]!;
+    final Color chromeHighlight = isDark ? Colors.blueGrey[600]! : Colors.grey[500]!;
 
-        // Main slot container
+
+    return Stack(
+      alignment: Alignment.topCenter,
+      children: [
         Container(
-          width: MediaQuery.of(context).size.width - 70,
-          constraints: const BoxConstraints(maxWidth: 400),
-          padding: const EdgeInsets.all(30),
+          width: MediaQuery.of(context).size.width - 50,
+          constraints: const BoxConstraints(maxWidth: 420),
           decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: isDark
-                  ? [const Color(0xFF1A1A2E), const Color(0xFF0F0F1E)]
-                  : [Colors.white, Colors.grey[100]!],
-            ),
-            border: Border(
-              left: BorderSide(color: Colors.amber[600]!, width: 4),
-              right: BorderSide(color: Colors.amber[600]!, width: 4),
-            ),
+            color: isDark ? const Color(0xFF222222) : Colors.grey[300],
+            borderRadius: BorderRadius.circular(30),
             boxShadow: [
               BoxShadow(
-                color: Colors.amber.withValues(alpha: 0.5),
-                blurRadius: 40,
-                spreadRadius: 8,
+                color: Colors.black.withOpacity(0.4),
+                blurRadius: 20,
+                offset: const Offset(0, 10),
               ),
             ],
+            border: Border.all(color: chromeColor, width: 6),
           ),
+          padding: const EdgeInsets.fromLTRB(20, 50, 20, 50),
           child: _buildSlotReel(isDark, entries),
         ),
-
-        // Bottom decoration
-        Container(
-          height: 12,
-          width: MediaQuery.of(context).size.width - 100,
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                Colors.amber[700]!,
-                Colors.yellow[400]!,
-                Colors.amber[700]!,
+        Positioned(
+          top: 0,
+          child: Container(
+            width: MediaQuery.of(context).size.width - 100,
+            height: 30,
+            constraints: const BoxConstraints(maxWidth: 370),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [chromeColor, chromeHighlight, chromeColor],
+              ),
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(25),
+                topRight: Radius.circular(25),
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: chromeColor.withOpacity(0.8),
+                  blurRadius: 15,
+                  spreadRadius: 2,
+                ),
               ],
             ),
-            borderRadius: const BorderRadius.only(
-              bottomLeft: Radius.circular(25),
-              bottomRight: Radius.circular(25),
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.amber.withValues(alpha: 0.8),
-                blurRadius: 20,
-                spreadRadius: 3,
+          ),
+        ),
+        Positioned(
+          bottom: 0,
+          child: Container(
+            width: MediaQuery.of(context).size.width - 100,
+            height: 30,
+            constraints: const BoxConstraints(maxWidth: 370),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [chromeColor, chromeHighlight, chromeColor],
               ),
-            ],
+              borderRadius: const BorderRadius.only(
+                bottomLeft: Radius.circular(25),
+                bottomRight: Radius.circular(25),
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: chromeColor.withOpacity(0.8),
+                  blurRadius: 15,
+                  spreadRadius: 2,
+                ),
+              ],
+            ),
           ),
         ),
       ],
@@ -301,66 +282,62 @@ class _SpinScreenState extends State<SpinScreen> with TickerProviderStateMixin {
     return Container(
       height: itemHeight,
       decoration: BoxDecoration(
-        color: isDark ? Colors.black45 : Colors.grey[300],
-        borderRadius: BorderRadius.circular(20),
+        color: isDark ? const Color(0xFF0A0A0A) : Colors.white, // This is the background of the reel behind the items
+        borderRadius: BorderRadius.circular(15),
         border: Border.all(
-          color: Colors.amber[400]!,
-          width: 3,
+          // Corrected reel border to match chrome color if desired, or keep neutral
+          color: Colors.white, // Keeping a neutral grey border for the reel
+          width: 2,
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.3),
-            blurRadius: 10,
+            color: Colors.white.withOpacity(0.5),
+            blurRadius: 15,
             spreadRadius: -5,
+            offset: const Offset(0, 5),
           ),
         ],
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(17),
+        borderRadius: BorderRadius.circular(13),
         child: Stack(
           children: [
-            // Gradient overlays for depth
-            Positioned(
-              top: 0,
-              left: 0,
-              right: 0,
-              height: 50,
+            _buildAnimatedSlotItems(entries),
+            // Row(
+            //   children: List.generate(
+            //     3,
+            //         (index) => Expanded(
+            //       child: Container(
+            //         margin: index < 2 ? const EdgeInsets.only(right: 1.0) : null,
+            //         decoration: BoxDecoration(
+            //           border: Border(
+            //             right: index < 2
+            //                 ? BorderSide(color: Colors.yellow[800]!, width: 2)
+            //                 : BorderSide.none,
+            //           ),
+            //         ),
+            //       ),
+            //     ),
+            //   ),
+            // ),
+            Positioned.fill(
               child: Container(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     colors: [
-                      Colors.black.withValues(alpha: 0.7),
+                      // Changed to match background of reel, not white, for seamless look
+                      isDark ? const Color(0xFF0A0A0A).withOpacity(0.8) : Colors.white.withOpacity(0.8),
                       Colors.transparent,
+                      Colors.transparent,
+                      isDark ? const Color(0xFF0A0A0A).withOpacity(0.8) : Colors.white.withOpacity(0.8),
                     ],
+                    stops: const [0.0, 0.4, 0.6, 1.0],
                   ),
                 ),
               ),
             ),
-            Positioned(
-              bottom: 0,
-              left: 0,
-              right: 0,
-              height: 50,
-              child: Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.bottomCenter,
-                    end: Alignment.topCenter,
-                    colors: [
-                      Colors.black.withValues(alpha: 0.7),
-                      Colors.transparent,
-                    ],
-                  ),
-                ),
-              ),
-            ),
-
-            // Slot items
-            _buildAnimatedSlotItems(entries),
-
-            // Center highlight
             Center(
               child: AnimatedBuilder(
                 animation: _glowAnimation,
@@ -368,20 +345,15 @@ class _SpinScreenState extends State<SpinScreen> with TickerProviderStateMixin {
                   return Container(
                     height: itemHeight - 20,
                     decoration: BoxDecoration(
-                      border: Border.all(
-                        color: Colors.amber[300]!.withValues(
-                          alpha: winner != null ? 1.0 : _glowAnimation.value,
-                        ),
-                        width: 3,
-                      ),
-                      borderRadius: BorderRadius.circular(18),
+
+                      borderRadius: BorderRadius.circular(12),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.amber.withValues(
-                            alpha: winner != null ? 0.9 : _glowAnimation.value * 0.6,
+                          color: Colors.white.withOpacity(
+                            winner != null ? 0.2 : _glowAnimation.value * 0.1,
                           ),
-                          blurRadius: 20,
-                          spreadRadius: 2,
+                          blurRadius: 25,
+                          spreadRadius: 3,
                         ),
                       ],
                     ),
@@ -398,28 +370,28 @@ class _SpinScreenState extends State<SpinScreen> with TickerProviderStateMixin {
   Widget _buildAnimatedSlotItems(List<SpinEntry> entries) {
     if (entries.isEmpty) return const SizedBox();
 
-    // Create extended list for smooth infinite scrolling
     final extendedEntries = List<SpinEntry>.generate(
-      entries.length * 10,
+      entries.length * 20,
           (index) => entries[index % entries.length],
     );
 
-    // Calculate scroll offset
     final fullSpins = 5;
     final totalDistance = entries.length * fullSpins + finalIndex;
-    final currentOffset = -_slotOffset * totalDistance * itemHeight;
+    final maxScrollOffset = totalDistance * itemHeight;
+
+    final currentOffset = -_slotAnimation.value * maxScrollOffset;
 
     return Transform.translate(
       offset: Offset(0, currentOffset),
       child: Column(
         children: extendedEntries.asMap().entries.map((entry) {
-          final index = entry.key;
           final item = entry.value;
 
-          return SizedBox(
-            height: itemHeight,
-            child: Padding(
-              padding: const EdgeInsets.all(10),
+          return Center(
+            child: SizedBox(
+              height: itemHeight,
+              width: itemHeight,
+              // --- CRITICAL CHANGE: Removed Padding here completely ---
               child: _buildReelItem(item),
             ),
           );
@@ -429,7 +401,12 @@ class _SpinScreenState extends State<SpinScreen> with TickerProviderStateMixin {
   }
 
   Widget _buildReelItem(SpinEntry entry) {
+    // Define a consistent inner padding for content (text or image)
+    const double innerContentPadding = 0.0; // This will provide internal spacing for content
+
     return Container(
+      // The outer container takes the full itemHeight/itemWidth (160x160)
+      // and defines the rounded corners and gradient for the entire slot item.
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
@@ -437,46 +414,59 @@ class _SpinScreenState extends State<SpinScreen> with TickerProviderStateMixin {
             Color(int.parse(entry.gradientEnd.replaceAll('#', '0xFF'))),
           ],
         ),
-        borderRadius: BorderRadius.circular(15),
+        // --- MODIFIED: Ensure this borderRadius is consistent and defines the visual edge ---
+        borderRadius: BorderRadius.circular(10), // A slightly larger radius for the main item
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.2),
-            blurRadius: 8,
-            offset: const Offset(0, 4),
+            color: Colors.black.withOpacity(0.4),
+            blurRadius: 10,
+            offset: const Offset(0, 3),
           ),
         ],
       ),
-      child: entry.type == 'text'
-          ? Center(
-        child: Padding(
-          padding: const EdgeInsets.all(12),
+      // Use Padding around the actual content (text or image) to create the inner buffer
+      child: Padding(
+        padding: const EdgeInsets.all(innerContentPadding), // Apply inner padding here
+        child: entry.type == 'text'
+            ? Center( // Center text explicitly within its padding
           child: Text(
             entry.value,
             style: const TextStyle(
               color: Colors.white,
               fontSize: 20,
               fontWeight: FontWeight.bold,
+              shadows: [
+                Shadow(
+                  blurRadius: 5.0,
+                  color: Colors.black,
+                  offset: Offset(1.0, 1.0),
+                ),
+              ],
             ),
             textAlign: TextAlign.center,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
           ),
-        ),
-      )
-          : ClipRRect(
-        borderRadius: BorderRadius.circular(15),
-        child: Image.file(
-          File(entry.value),
-          fit: BoxFit.cover,
-          errorBuilder: (context, error, stackTrace) {
-            return const Center(
-              child: Icon(
-                Icons.image_not_supported,
-                color: Colors.white,
-                size: 50,
-              ),
-            );
-          },
+        )
+            : ClipRRect(
+          // --- MODIFIED: borderRadius should be slightly smaller than the outer container
+          //                to account for the `innerContentPadding` and create a consistent inner curve.
+          borderRadius: BorderRadius.circular(10 - innerContentPadding * 0.5), // Adjust this value
+          child: SizedBox.expand(
+            child: Image.file(
+              File(entry.value),
+              fit: BoxFit.scaleDown, // This centers the image within the available space
+              errorBuilder: (context, error, stackTrace) {
+                return const Center(
+                  child: Icon(
+                    Icons.broken_image,
+                    color: Colors.white70,
+                    size: 60,
+                  ),
+                );
+              },
+            ),
+          ),
         ),
       ),
     );
@@ -484,6 +474,9 @@ class _SpinScreenState extends State<SpinScreen> with TickerProviderStateMixin {
 
   Widget _buildWinnerDisplay(bool isDark) {
     if (winner == null) return const SizedBox.shrink();
+
+    final Color chromeColor = isDark ? Colors.blueGrey[800]! : Colors.grey[700]!;
+    final Color chromeHighlight = isDark ? Colors.blueGrey[600]! : Colors.grey[500]!;
 
     return ScaleTransition(
       scale: _winnerScaleAnimation,
@@ -496,12 +489,12 @@ class _SpinScreenState extends State<SpinScreen> with TickerProviderStateMixin {
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [Colors.amber[700]!, Colors.yellow[400]!],
+                  colors: [chromeColor, chromeHighlight],
                 ),
                 borderRadius: BorderRadius.circular(35),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.amber.withValues(alpha: 0.8),
+                    color: chromeColor.withOpacity(0.8),
                     blurRadius: 20,
                     spreadRadius: 3,
                   ),
@@ -541,7 +534,7 @@ class _SpinScreenState extends State<SpinScreen> with TickerProviderStateMixin {
                 boxShadow: [
                   BoxShadow(
                     color: Color(int.parse(winner!.gradientStart.replaceAll('#', '0xFF')))
-                        .withValues(alpha: 0.6),
+                        .withOpacity(0.6),
                     blurRadius: 25,
                     spreadRadius: 4,
                   ),
@@ -553,10 +546,10 @@ class _SpinScreenState extends State<SpinScreen> with TickerProviderStateMixin {
                     width: 100,
                     height: 100,
                     decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.2),
+                      color: Colors.white.withOpacity(0.2),
                       borderRadius: BorderRadius.circular(15),
                       border: Border.all(
-                        color: Colors.white.withValues(alpha: 0.5),
+                        color: Colors.white.withOpacity(0.5),
                         width: 2,
                       ),
                     ),
@@ -568,7 +561,7 @@ class _SpinScreenState extends State<SpinScreen> with TickerProviderStateMixin {
                       borderRadius: BorderRadius.circular(13),
                       child: Image.file(
                         File(winner!.value),
-                        fit: BoxFit.cover,
+                        fit: BoxFit.contain,
                         errorBuilder: (context, error, stackTrace) {
                           return const Center(
                             child: Icon(
@@ -627,7 +620,7 @@ class _SpinScreenState extends State<SpinScreen> with TickerProviderStateMixin {
       decoration: BoxDecoration(
         boxShadow: [
           BoxShadow(
-            color: Colors.green.withValues(alpha: 0.7),
+            color: Colors.green.withOpacity(0.7),
             blurRadius: 30,
             spreadRadius: 5,
           ),

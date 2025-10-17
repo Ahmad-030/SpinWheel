@@ -70,7 +70,7 @@ class _AddEntryDialogState extends State<AddEntryDialog> with SingleTickerProvid
               borderRadius: BorderRadius.circular(30),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.3),
+                  color: Colors.black.withOpacity(0.3),
                   blurRadius: 40,
                   spreadRadius: 5,
                   offset: const Offset(0, 10),
@@ -88,196 +88,200 @@ class _AddEntryDialogState extends State<AddEntryDialog> with SingleTickerProvid
                       end: Alignment.bottomRight,
                       colors: isDark
                           ? [
-                        Colors.white.withValues(alpha: 0.15),
-                        Colors.white.withValues(alpha: 0.05),
+                        Colors.white.withOpacity(0.15),
+                        Colors.white.withOpacity(0.05),
                       ]
                           : [
-                        Colors.white.withValues(alpha: 0.7),
-                        Colors.white.withValues(alpha: 0.3),
+                        Colors.white.withOpacity(0.7),
+                        Colors.white.withOpacity(0.3),
                       ],
                     ),
                     borderRadius: BorderRadius.circular(30),
                     border: Border.all(
                       color: isDark
-                          ? Colors.white.withValues(alpha: 0.2)
-                          : Colors.white.withValues(alpha: 0.5),
+                          ? Colors.white.withOpacity(0.2)
+                          : Colors.white.withOpacity(0.5),
                       width: 1.5,
                     ),
                   ),
                   child: Padding(
                     padding: const EdgeInsets.all(30),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        // Icon Header
-                        Container(
-                          padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [
-                                Colors.purple[400]!,
-                                Colors.deepPurple[600]!,
+                    // --- FIX: Wrap the internal Column with SingleChildScrollView ---
+                    child: SingleChildScrollView(
+                      physics: const BouncingScrollPhysics(),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          // Icon Header
+                          Container(
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [
+                                  Colors.purple[400]!,
+                                  Colors.deepPurple[600]!,
+                                ],
+                              ),
+                              shape: BoxShape.circle,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.purple.withOpacity(0.5),
+                                  blurRadius: 20,
+                                  spreadRadius: 2,
+                                ),
                               ],
                             ),
-                            shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.purple.withValues(alpha: 0.5),
-                                blurRadius: 20,
-                                spreadRadius: 2,
-                              ),
-                            ],
+                            child: Icon(
+                              widget.type == 'text' ? Icons.text_fields : Icons.image,
+                              size: 40,
+                              color: Colors.white,
+                            ),
                           ),
-                          child: Icon(
-                            widget.type == 'text' ? Icons.text_fields : Icons.image,
-                            size: 40,
-                            color: Colors.white,
+
+                          const SizedBox(height: 24),
+
+                          // Title
+                          Text(
+                            'Add ${widget.type == 'text' ? 'Text Entry' : 'Image Entry'}',
+                            style: TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                              color: isDark ? Colors.white : Colors.black87,
+                              letterSpacing: 0.5,
+                            ),
                           ),
-                        ),
 
-                        const SizedBox(height: 24),
+                          const SizedBox(height: 8),
 
-                        // Title
-                        Text(
-                          'Add ${widget.type == 'text' ? 'Text Entry' : 'Image Entry'}',
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            color: isDark ? Colors.white : Colors.black87,
-                            letterSpacing: 0.5,
+                          Text(
+                            widget.type == 'text'
+                                ? 'Enter your text to add to the wheel'
+                                : 'Enter the image path to add to the wheel',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: isDark
+                                  ? Colors.white.withOpacity(0.7)
+                                  : Colors.black54,
+                            ),
+                            textAlign: TextAlign.center,
                           ),
-                        ),
 
-                        const SizedBox(height: 8),
+                          const SizedBox(height: 30),
 
-                        Text(
-                          widget.type == 'text'
-                              ? 'Enter your text to add to the wheel'
-                              : 'Enter the image path to add to the wheel',
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: isDark
-                                ? Colors.white.withValues(alpha: 0.7)
-                                : Colors.black54,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-
-                        const SizedBox(height: 30),
-
-                        // Input Field with Glassmorphism
-                        Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(16),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.1),
-                                blurRadius: 10,
-                                offset: const Offset(0, 4),
-                              ),
-                            ],
-                          ),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(16),
-                            child: BackdropFilter(
-                              filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: isDark
-                                      ? Colors.white.withValues(alpha: 0.1)
-                                      : Colors.white.withValues(alpha: 0.6),
-                                  borderRadius: BorderRadius.circular(16),
-                                  border: Border.all(
+                          // Input Field with Glassmorphism
+                          Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(16),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.1),
+                                  blurRadius: 10,
+                                  offset: const Offset(0, 4),
+                                ),
+                              ],
+                            ),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(16),
+                              child: BackdropFilter(
+                                filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                                child: Container(
+                                  decoration: BoxDecoration(
                                     color: isDark
-                                        ? Colors.white.withValues(alpha: 0.2)
-                                        : Colors.white.withValues(alpha: 0.5),
-                                    width: 1,
+                                        ? Colors.white.withOpacity(0.1)
+                                        : Colors.white.withOpacity(0.6),
+                                    borderRadius: BorderRadius.circular(16),
+                                    border: Border.all(
+                                      color: isDark
+                                          ? Colors.white.withOpacity(0.2)
+                                          : Colors.white.withOpacity(0.5),
+                                      width: 1,
+                                    ),
+                                  ),
+                                  child: TextField(
+                                    controller: _controller,
+                                    autofocus: true,
+                                    style: TextStyle(
+                                      color: isDark ? Colors.white : Colors.black87,
+                                      fontSize: 16,
+                                    ),
+                                    decoration: InputDecoration(
+                                      hintText: widget.type == 'text'
+                                          ? 'Enter your text here...'
+                                          : 'Enter image path...',
+                                      hintStyle: TextStyle(
+                                        color: isDark
+                                            ? Colors.white.withOpacity(0.5)
+                                            : Colors.black45,
+                                      ),
+                                      prefixIcon: Icon(
+                                        widget.type == 'text'
+                                            ? Icons.edit_outlined
+                                            : Icons.image_outlined,
+                                        color: isDark
+                                            ? Colors.white.withOpacity(0.7)
+                                            : Colors.black54,
+                                      ),
+                                      border: InputBorder.none,
+                                      contentPadding: const EdgeInsets.symmetric(
+                                        horizontal: 20,
+                                        vertical: 16,
+                                      ),
+                                    ),
+                                    onSubmitted: (_) {
+                                      if (_controller.text.trim().isNotEmpty) {
+                                        widget.onAdd(_controller.text.trim());
+                                        _closeDialog();
+                                      }
+                                    },
                                   ),
                                 ),
-                                child: TextField(
-                                  controller: _controller,
-                                  autofocus: true,
-                                  style: TextStyle(
-                                    color: isDark ? Colors.white : Colors.black87,
-                                    fontSize: 16,
+                              ),
+                            ),
+                          ),
+
+                          const SizedBox(height: 30),
+
+                          // Action Buttons
+                          Row(
+                            children: [
+                              Expanded(
+                                child: _buildGlassButton(
+                                  onPressed: _closeDialog,
+                                  text: 'Cancel',
+                                  icon: Icons.close,
+                                  gradient: LinearGradient(
+                                    colors: [
+                                      Colors.grey[400]!,
+                                      Colors.grey[600]!,
+                                    ],
                                   ),
-                                  decoration: InputDecoration(
-                                    hintText: widget.type == 'text'
-                                        ? 'Enter your text here...'
-                                        : 'Enter image path...',
-                                    hintStyle: TextStyle(
-                                      color: isDark
-                                          ? Colors.white.withValues(alpha: 0.5)
-                                          : Colors.black45,
-                                    ),
-                                    prefixIcon: Icon(
-                                      widget.type == 'text'
-                                          ? Icons.edit_outlined
-                                          : Icons.image_outlined,
-                                      color: isDark
-                                          ? Colors.white.withValues(alpha: 0.7)
-                                          : Colors.black54,
-                                    ),
-                                    border: InputBorder.none,
-                                    contentPadding: const EdgeInsets.symmetric(
-                                      horizontal: 20,
-                                      vertical: 16,
-                                    ),
-                                  ),
-                                  onSubmitted: (_) {
+                                  isDark: isDark,
+                                ),
+                              ),
+                              const SizedBox(width: 16),
+                              Expanded(
+                                child: _buildGlassButton(
+                                  onPressed: () {
                                     if (_controller.text.trim().isNotEmpty) {
                                       widget.onAdd(_controller.text.trim());
                                       _closeDialog();
                                     }
                                   },
+                                  text: 'Add',
+                                  icon: Icons.check,
+                                  gradient: LinearGradient(
+                                    colors: [
+                                      Colors.purple[400]!,
+                                      Colors.deepPurple[600]!,
+                                    ],
+                                  ),
+                                  isDark: isDark,
                                 ),
                               ),
-                            ),
+                            ],
                           ),
-                        ),
-
-                        const SizedBox(height: 30),
-
-                        // Action Buttons
-                        Row(
-                          children: [
-                            Expanded(
-                              child: _buildGlassButton(
-                                onPressed: _closeDialog,
-                                text: 'Cancel',
-                                icon: Icons.close,
-                                gradient: LinearGradient(
-                                  colors: [
-                                    Colors.grey[400]!,
-                                    Colors.grey[600]!,
-                                  ],
-                                ),
-                                isDark: isDark,
-                              ),
-                            ),
-                            const SizedBox(width: 16),
-                            Expanded(
-                              child: _buildGlassButton(
-                                onPressed: () {
-                                  if (_controller.text.trim().isNotEmpty) {
-                                    widget.onAdd(_controller.text.trim());
-                                    _closeDialog();
-                                  }
-                                },
-                                text: 'Add',
-                                icon: Icons.check,
-                                gradient: LinearGradient(
-                                  colors: [
-                                    Colors.purple[400]!,
-                                    Colors.deepPurple[600]!,
-                                  ],
-                                ),
-                                isDark: isDark,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -289,6 +293,7 @@ class _AddEntryDialogState extends State<AddEntryDialog> with SingleTickerProvid
     );
   }
 
+  // ... (_buildGlassButton remains the same)
   Widget _buildGlassButton({
     required VoidCallback onPressed,
     required String text,
@@ -302,7 +307,7 @@ class _AddEntryDialogState extends State<AddEntryDialog> with SingleTickerProvid
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.2),
+            color: Colors.black.withOpacity(0.2),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -322,7 +327,7 @@ class _AddEntryDialogState extends State<AddEntryDialog> with SingleTickerProvid
                   gradient: gradient,
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(
-                    color: Colors.white.withValues(alpha: 0.3),
+                    color: Colors.white.withOpacity(0.3),
                     width: 1,
                   ),
                 ),
