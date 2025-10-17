@@ -234,7 +234,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               ),
 
               // Start button
-              if (entries.length >= 2)
+              if (entries.length >= 3)
                 Padding(
                   padding: const EdgeInsets.all(20),
                   child: SizedBox(
