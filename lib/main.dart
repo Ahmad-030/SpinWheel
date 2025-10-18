@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'Providers/Theme_provider.dart';
-import 'Screens/Home_Screen.dart';
+import 'Screens/Splash_Screeen.dart';
 import 'Theme/App_theme.dart';
 
 void main() {
@@ -23,7 +23,7 @@ class SpinWheelApp extends StatelessWidget {
             theme: AppTheme.lightTheme,
             darkTheme: AppTheme.darkTheme,
             themeMode: themeProvider.themeMode,
-            home: const HomeScreen(),
+            home: const SplashScreen(), // Changed from HomeScreen to SplashScreen
           );
         },
       ),
